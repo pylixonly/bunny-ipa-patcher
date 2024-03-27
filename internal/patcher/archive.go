@@ -13,7 +13,12 @@ func extractDiscord(discordPath *string) {
 	log.Println("extracting", *discordPath)
 	format := archiver.Zip{}
 
-	err := format.Unarchive(*discordPath, ".")
+	merr := os.Mkdir("temp", 0755)
+	if merr != nil {
+		log.Fatalln(merr)
+	}
+
+	err := format.Unarchive(*discordPath, "./temp")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -27,7 +32,7 @@ func extractIcons(iconsPath *string) {
 
 	format := archiver.Zip{}
 
-	err := format.Unarchive(*iconsPath, "Payload/Discord.app/")
+	err := format.Unarchive(*iconsPath, "temp/Payload/Discord.app/")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -42,7 +47,7 @@ func packDiscord() {
 	format := archiver.Zip{
 		CompressionLevel: flate.BestCompression,
 	}
-	err := format.Archive([]string{"Payload"}, "Discord.zip")
+	err := format.Archive([]string{"temp/Payload"}, "Discord.zip")
 	if err != nil {
 		log.Fatalln(err)
 	}

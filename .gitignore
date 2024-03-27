@@ -1,3 +1,5 @@
 files/
+temp/
+build/
 Enmity.ipa
 .DS_Store

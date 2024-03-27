@@ -9,7 +9,6 @@ import (
 var (
 	ipaFile   string
 	iconsFile string
-	dylibFile string
 )
 
 func init() {
@@ -20,5 +19,5 @@ func init() {
 }
 
 func main() {
-	patcher.PatchDiscord(&ipaFile, &iconsFile, &dylibFile)
+	patcher.PatchDiscord(&ipaFile, &iconsFile)
 }

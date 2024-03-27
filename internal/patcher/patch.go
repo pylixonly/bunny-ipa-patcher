@@ -14,11 +14,12 @@ const (
 )
 
 const (
-	IPA_URL    = "https://github.com/enmity-mod/tweak/blob/main/Discord.ipa?raw=true"
-	ICONS_URL  = "https://files.enmity.app/icons.zip"
+	// TODO: accept this as an argument
+	IPA_URL    = "https://ipa.aspy.dev/discord/testflight/Discord_223.0_56967.ipa"
+	ICONS_URL  = "https://raw.githubusercontent.com/enmity-mod/assets/main/icons.zip"
 )
 
-func PatchDiscord(discordPath *string, iconsPath *string, dylibPath *string) {
+func PatchDiscord(discordPath *string, iconsPath *string) {
 	log.Println("starting patcher")
 
 	checkFile(discordPath, DEFAULT_IPA_PATH, IPA_URL)
@@ -83,7 +84,7 @@ func checkFile(path *string, defaultPath string, url string) {
 
 // Delete the payload folder
 func clearPayload() {
-	err := os.RemoveAll("Payload")
+	err := os.RemoveAll("temp")
 	if err != nil {
 		log.Panicln(err)
 	}
@@ -91,7 +92,7 @@ func clearPayload() {
 
 // Load Discord's plist file
 func loadPlist() (map[string]interface{}, error) {
-	infoFile, err := os.Open("Payload/Discord.app/Info.plist")
+	infoFile, err := os.Open("temp/Payload/Discord.app/Info.plist")
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +108,7 @@ func loadPlist() (map[string]interface{}, error) {
 
 // Save Discord's plist file
 func savePlist(info *map[string]interface{}) error {
-	infoFile, err := os.OpenFile("Payload/Discord.app/Info.plist", os.O_RDWR|os.O_TRUNC, 0600)
+	infoFile, err := os.OpenFile("temp/Payload/Discord.app/Info.plist", os.O_RDWR|os.O_TRUNC, 0600)
 	if err != nil {
 		return err
 	}
