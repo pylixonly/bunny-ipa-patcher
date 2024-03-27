@@ -33,12 +33,6 @@ func PatchDiscord(discordPath *string, iconsPath *string) {
 	}
 	log.Println("Discord renamed")
 
-	log.Println("adding Enmity url scheme")
-	if err := patchSchemes(); err != nil {
-		log.Fatalln(err)
-	}
-	log.Println("url scheme added")
-
 	log.Println("remove devices whitelist")
 	if err := patchDevices(); err != nil {
 		log.Fatalln(err)
@@ -127,27 +121,6 @@ func patchName() error {
 
 	info["CFBundleName"] = "Enmity"
 	info["CFBundleDisplayName"] = "Enmity"
-
-	err = savePlist(&info)
-	return err
-}
-
-// Patch Discord's URL scheme to add Enmity's URL handler
-func patchSchemes() error {
-	info, err := loadPlist()
-	if err != nil {
-		return err
-	}
-
-	info["CFBundleURLTypes"] = append(
-		info["CFBundleURLTypes"].([]interface{}),
-		map[string]interface{}{
-			"CFBundleURLName": "Enmity",
-			"CFBundleURLSchemes": []string{
-				"enmity",
-			},
-		},
-	)
 
 	err = savePlist(&info)
 	return err
