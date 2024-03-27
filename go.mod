@@ -1,4 +1,4 @@
-module enmity.app/patcher
+module io.github.pyoncord/patcher
 
 go 1.17
 

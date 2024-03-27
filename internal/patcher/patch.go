@@ -27,7 +27,7 @@ func PatchDiscord(discordPath *string, iconsPath *string) {
 
 	extractDiscord(discordPath)
 
-	log.Println("renaming Discord to Enmity")
+	log.Println("renaming Discord to Pyoncord")
 	if err := patchName(); err != nil {
 		log.Fatalln(err)
 	}
@@ -146,17 +146,19 @@ func patchIcon() error {
 		return err
 	}
 
-	info["CFBundleIcons"].(map[string]interface{})["CFBundlePrimaryIcon"].(map[string]interface{})["CFBundleIconName"] = "EnmityIcon"
-	info["CFBundleIcons"].(map[string]interface{})["CFBundlePrimaryIcon"].(map[string]interface{})["CFBundleIconFiles"] = []string{"EnmityIcon60x60"}
+	icons := info["CFBundleIcons"].(map[string]interface{})["CFBundlePrimaryIcon"].(map[string]interface{})
+	icons["CFBundleIconName"] = "EnmityIcon"
+	icons["CFBundleIconFiles"] = []string{"EnmityIcon60x60"}
 
-	info["CFBundleIcons~ipad"].(map[string]interface{})["CFBundlePrimaryIcon"].(map[string]interface{})["CFBundleIconName"] = "EnmityIcon"
-	info["CFBundleIcons~ipad"].(map[string]interface{})["CFBundlePrimaryIcon"].(map[string]interface{})["CFBundleIconFiles"] = []string{"EnmityIcon60x60", "EnmityIcon76x76"}
+	icons = info["CFBundleIcons~ipad"].(map[string]interface{})["CFBundlePrimaryIcon"].(map[string]interface{})
+	icons["CFBundleIconName"] = "EnmityIcon"
+	icons["CFBundleIconFiles"] = []string{"EnmityIcon60x60", "EnmityIcon76x76"}
 
 	err = savePlist(&info)
 	return err
 }
 
-// Show Enmity's document folder in Files app and iTunes/Finder
+// Show Pyoncord's document folder in Files app and iTunes/Finder
 func patchiTunesAndFiles() error {
 	info, err := loadPlist()
 	if err != nil {

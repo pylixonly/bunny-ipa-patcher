@@ -52,7 +52,7 @@ func packDiscord() {
 		log.Fatalln(err)
 	}
 
-	err = os.Rename("Discord.zip", "Enmity.ipa")
+	err = os.Rename("Discord.zip", "Pyoncord.ipa")
 	if err != nil {
 		log.Fatalln(err)
 	}
