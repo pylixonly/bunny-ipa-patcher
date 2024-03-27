@@ -8,22 +8,11 @@ import (
 	"howett.net/plist"
 )
 
-const (
-	DEFAULT_IPA_PATH    = "files/Discord.ipa"
-	DEFAULT_ICONS_PATH  = "files/icons.zip"
-)
-
-const (
-	// TODO: accept this as an argument
-	IPA_URL    = "https://ipa.aspy.dev/discord/testflight/Discord_223.0_56967.ipa"
-	ICONS_URL  = "https://raw.githubusercontent.com/enmity-mod/assets/main/icons.zip"
-)
-
 func PatchDiscord(discordPath *string, iconsPath *string) {
 	log.Println("starting patcher")
 
-	checkFile(discordPath, DEFAULT_IPA_PATH, IPA_URL)
-	checkFile(iconsPath, DEFAULT_ICONS_PATH, ICONS_URL)
+	checkFile(discordPath)
+	checkFile(iconsPath)
 
 	extractDiscord(discordPath)
 
@@ -59,20 +48,11 @@ func PatchDiscord(discordPath *string, iconsPath *string) {
 	log.Println("done!")
 }
 
-// Check if file exists, download if not found
-func checkFile(path *string, defaultPath string, url string) {
+// Check if file exists
+func checkFile(path *string) {
 	_, err := os.Stat(*path)
 	if errors.Is(err, os.ErrNotExist) {
-		if *path == defaultPath {
-			log.Println("downloading", url, "to", *path)
-			err := downloadFile(url, path)
-			if err != nil {
-				log.Println("error downloading", url)
-				log.Fatalln(err)
-			}
-		} else {
-			log.Fatalln("file not found", *path)
-		}
+		log.Fatalln("file not found", *path)
 	}
 }
 
