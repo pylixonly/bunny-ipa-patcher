@@ -1,4 +1,4 @@
-package patcher
+package main
 
 import (
 	"compress/flate"

@@ -1,4 +1,4 @@
-package patcher
+package main
 
 import (
 	"errors"
@@ -10,11 +10,6 @@ import (
 	"fmt"
 
 	"howett.net/plist"
-)
-
-const (
-	DEFAULT_IPA_PATH    = "files/Discord.ipa"
-	DEFAULT_ICONS_PATH  = "files/icons.zip"
 )
 
 func PatchDiscord(discordPath *string, iconsPath *string) {
@@ -30,8 +25,8 @@ func PatchDiscord(discordPath *string, iconsPath *string) {
 		log.Fatalln(err)
 	}
 
-	log.Println("Patching react-navigation+elements")
-	if err := patchReactNavigationElements(); err != nil {
+	log.Println("Renaming react-navigation+elements folder")
+	if err := renameReactNavigationElementsFolder(); err != nil {
 		log.Fatalln(err)
 	}
 
@@ -76,23 +71,8 @@ func clearPayload() {
 	}
 }
 
-// Load Discord's plist file
-func loadPlist() (map[string]interface{}, error) {
-	infoFile, err := os.Open(".temp/Payload/Discord.app/Info.plist")
-	if err != nil {
-		return nil, err
-	}
-
-	var info map[string]interface{}
-	decoder := plist.NewDecoder(infoFile)
-	if err := decoder.Decode(&info); err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
-func patchReactNavigationElements() error {
+// Patch the long @react-navigation+elements patch folder
+func renameReactNavigationElementsFolder() error {
 	var reactNavigationPath, reactNavigationFullPath string
 
 	err := filepath.Walk("./.temp/Payload/Discord.app/assets", func(path string, info os.FileInfo, err error) error {
@@ -152,6 +132,21 @@ func patchReactNavigationElements() error {
 	return nil
 }
 
+// Load Discord's plist file
+func loadPlist() (map[string]interface{}, error) {
+	infoFile, err := os.Open(".temp/Payload/Discord.app/Info.plist")
+	if err != nil {
+		return nil, err
+	}
+
+	var info map[string]interface{}
+	decoder := plist.NewDecoder(infoFile)
+	if err := decoder.Decode(&info); err != nil {
+		return nil, err
+	}
+
+	return info, nil
+}
 
 // Save Discord's plist file
 func savePlist(info *map[string]interface{}) error {

@@ -1,6 +1,6 @@
-module io.github.pyoncord/patcher
+module pyoncord/patcher
 
-go 1.17
+go 1.20
 
 require (
 	github.com/mholt/archiver v3.1.1+incompatible
