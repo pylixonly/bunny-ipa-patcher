@@ -4,8 +4,17 @@ import (
 	"errors"
 	"log"
 	"os"
+	"strings"
+	"path/filepath"
+	"io/ioutil"
+	"fmt"
 
 	"howett.net/plist"
+)
+
+const (
+	DEFAULT_IPA_PATH    = "files/Discord.ipa"
+	DEFAULT_ICONS_PATH  = "files/icons.zip"
 )
 
 func PatchDiscord(discordPath *string, iconsPath *string) {
@@ -21,6 +30,12 @@ func PatchDiscord(discordPath *string, iconsPath *string) {
 		log.Fatalln(err)
 	}
 	log.Println("Discord renamed")
+
+	log.Println("patching react navigation elements")
+	if err := patchReactNavigationElements(); err != nil {
+		log.Fatalln(err)
+	}
+	log.Println("react navigation patched")
 
 	log.Println("remove devices whitelist")
 	if err := patchDevices(); err != nil {
@@ -79,6 +94,67 @@ func loadPlist() (map[string]interface{}, error) {
 
 	return info, nil
 }
+
+func patchReactNavigationElements() error {
+	var reactNavigationPath, reactNavigationFullPath string
+
+	err := filepath.Walk("./temp/Payload/Discord.app/assets", func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if info.IsDir() && strings.HasPrefix(info.Name(), "@react-navigation+elements@") {
+			reactNavigationPath = info.Name()
+			reactNavigationFullPath = path
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return err
+	}
+
+	if reactNavigationPath == "" {
+		return fmt.Errorf("could not find the @react-navigation+elements folder")
+	}
+
+	log.Println("Found the react-navigation elements folder:", reactNavigationPath)
+
+	err = os.Rename(reactNavigationFullPath, reactNavigationFullPath + "/../@react-navigation+elements@patched")
+	if err != nil {
+		return err
+	}
+
+	manifestFile, err := os.OpenFile("temp/Payload/Discord.app/manifest.json", os.O_RDWR, 0600)
+	if err != nil {
+		return err
+	}
+	defer manifestFile.Close()
+
+	manifestData, err := ioutil.ReadAll(manifestFile)
+	if err != nil {
+		return err
+	}
+
+	manifestString := string(manifestData)
+	manifestString = strings.ReplaceAll(manifestString, reactNavigationPath, "@react-navigation+elements@patched")
+
+	if _, err := manifestFile.Seek(0, 0); err != nil {
+		return err
+	}
+
+	if _, err := manifestFile.WriteString(manifestString); err != nil {
+		return err
+	}
+
+	if err := manifestFile.Truncate(int64(len(manifestString))); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 
 // Save Discord's plist file
 func savePlist(info *map[string]interface{}) error {

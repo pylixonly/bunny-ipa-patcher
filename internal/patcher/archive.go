@@ -13,6 +13,10 @@ func extractDiscord(discordPath *string) {
 	log.Println("extracting", *discordPath)
 	format := archiver.Zip{}
 
+	if _, err := os.Stat("temp"); !os.IsNotExist(err) {
+		os.RemoveAll("temp")
+	}
+
 	merr := os.Mkdir("temp", 0755)
 	if merr != nil {
 		log.Fatalln(merr)
