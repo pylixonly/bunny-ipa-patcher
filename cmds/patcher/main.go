@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"log"
 
 	"io.github.pyoncord/patcher/internal/patcher"
 )
@@ -19,5 +20,8 @@ func init() {
 }
 
 func main() {
+	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
+	log.SetPrefix("\x1b[32m[Pyon]\x1b[0m ")
+
 	patcher.PatchDiscord(&ipaFile, &iconsFile)
 }

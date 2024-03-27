@@ -18,62 +18,59 @@ const (
 )
 
 func PatchDiscord(discordPath *string, iconsPath *string) {
-	log.Println("starting patcher")
+	log.Println("Starting patcher")
 
 	checkFile(discordPath)
 	checkFile(iconsPath)
 
 	extractDiscord(discordPath)
 
-	log.Println("renaming Discord to Pyoncord")
+	log.Println("Renaming Discord to Pyoncord")
 	if err := patchName(); err != nil {
 		log.Fatalln(err)
 	}
-	log.Println("Discord renamed")
 
-	log.Println("patching react navigation elements")
+	log.Println("Patching react-navigation+elements")
 	if err := patchReactNavigationElements(); err != nil {
 		log.Fatalln(err)
 	}
-	log.Println("react navigation patched")
 
-	log.Println("remove devices whitelist")
+	log.Println("Removing devices whitelist")
 	if err := patchDevices(); err != nil {
 		log.Fatalln(err)
 	}
-	log.Println("device whitelist removed")
 
-	log.Println("patch Discord icons")
+	log.Println("Patching Discord icons")
 	extractIcons(iconsPath)
 	if err := patchIcon(); err != nil {
 		log.Fatalln(err)
 	}
-	log.Println("icons patched")
 
-	log.Println("showing Discord's document folder in the Files app and Finder/iTunes")
+	log.Println("Flagging UISupportsDocumentBrowser & UIFileSharingEnabled to true")
 	if err := patchiTunesAndFiles(); err != nil {
 		log.Fatalln(err)
 	}
-	log.Println("patched")
 
 	packDiscord()
-	log.Println("cleaning up")
+
+	log.Println("Cleaning up")
+
 	clearPayload()
 
-	log.Println("done!")
+	log.Println("Done!")
 }
 
 // Check if file exists
 func checkFile(path *string) {
 	_, err := os.Stat(*path)
 	if errors.Is(err, os.ErrNotExist) {
-		log.Fatalln("file not found", *path)
+		log.Fatalln("File not found:", *path)
 	}
 }
 
 // Delete the payload folder
 func clearPayload() {
-	err := os.RemoveAll("temp")
+	err := os.RemoveAll(".temp")
 	if err != nil {
 		log.Panicln(err)
 	}
@@ -81,7 +78,7 @@ func clearPayload() {
 
 // Load Discord's plist file
 func loadPlist() (map[string]interface{}, error) {
-	infoFile, err := os.Open("temp/Payload/Discord.app/Info.plist")
+	infoFile, err := os.Open(".temp/Payload/Discord.app/Info.plist")
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +95,7 @@ func loadPlist() (map[string]interface{}, error) {
 func patchReactNavigationElements() error {
 	var reactNavigationPath, reactNavigationFullPath string
 
-	err := filepath.Walk("./temp/Payload/Discord.app/assets", func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk("./.temp/Payload/Discord.app/assets", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -119,14 +116,14 @@ func patchReactNavigationElements() error {
 		return fmt.Errorf("could not find the @react-navigation+elements folder")
 	}
 
-	log.Println("Found the react-navigation elements folder:", reactNavigationPath)
+	log.Println("Found the react-navigation+elements folder:\n\t", reactNavigationPath)
 
 	err = os.Rename(reactNavigationFullPath, reactNavigationFullPath + "/../@react-navigation+elements@patched")
 	if err != nil {
 		return err
 	}
 
-	manifestFile, err := os.OpenFile("temp/Payload/Discord.app/manifest.json", os.O_RDWR, 0600)
+	manifestFile, err := os.OpenFile(".temp/Payload/Discord.app/manifest.json", os.O_RDWR, 0600)
 	if err != nil {
 		return err
 	}
@@ -158,7 +155,7 @@ func patchReactNavigationElements() error {
 
 // Save Discord's plist file
 func savePlist(info *map[string]interface{}) error {
-	infoFile, err := os.OpenFile("temp/Payload/Discord.app/Info.plist", os.O_RDWR|os.O_TRUNC, 0600)
+	infoFile, err := os.OpenFile(".temp/Payload/Discord.app/Info.plist", os.O_RDWR|os.O_TRUNC, 0600)
 	if err != nil {
 		return err
 	}
