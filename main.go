@@ -12,7 +12,7 @@ var (
 
 func init() {
 	flag.StringVar(&ipaFile, "d", "files/Discord.ipa", "Path for Discord.ipa")
-	flag.StringVar(&iconsFile, "i", "files/icons.zip", "Path for icons.zip")
+	flag.StringVar(&iconsFile, "i", "files/ipa-icons.zip", "Path for icons.zip")
 
 	flag.Parse()
 }

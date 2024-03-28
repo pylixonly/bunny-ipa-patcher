@@ -167,8 +167,8 @@ func patchName() error {
 		return err
 	}
 
-	info["CFBundleName"] = "Enmity"
-	info["CFBundleDisplayName"] = "Enmity"
+	info["CFBundleName"] = "Pyoncord"
+	info["CFBundleDisplayName"] = "Pyoncord"
 
 	err = savePlist(&info)
 	return err
@@ -187,7 +187,7 @@ func patchDevices() error {
 	return err
 }
 
-// Patch the Discord icon to use Enmity's icon
+// Patch the Discord icon to use Pyoncord's icon
 func patchIcon() error {
 	info, err := loadPlist()
 	if err != nil {
@@ -195,12 +195,12 @@ func patchIcon() error {
 	}
 
 	icons := info["CFBundleIcons"].(map[string]interface{})["CFBundlePrimaryIcon"].(map[string]interface{})
-	icons["CFBundleIconName"] = "EnmityIcon"
-	icons["CFBundleIconFiles"] = []string{"EnmityIcon60x60"}
+	icons["CFBundleIconName"] = "PyoncordIcon"
+	icons["CFBundleIconFiles"] = []string{"PyoncordIcon60x60"}
 
 	icons = info["CFBundleIcons~ipad"].(map[string]interface{})["CFBundlePrimaryIcon"].(map[string]interface{})
-	icons["CFBundleIconName"] = "EnmityIcon"
-	icons["CFBundleIconFiles"] = []string{"EnmityIcon60x60", "EnmityIcon76x76"}
+	icons["CFBundleIconName"] = "PyoncordIcon"
+	icons["CFBundleIconFiles"] = []string{"PyoncordIcon60x60", "PyoncordIcon76x76"}
 
 	err = savePlist(&info)
 	return err
