@@ -6,13 +6,15 @@ import (
 )
 
 var (
-	ipaFile   string
-	iconsFile string
+	ipaFile		string
+	iconsFile 	string
+	outputPath	string
 )
 
 func init() {
 	flag.StringVar(&ipaFile, "d", "files/Discord.ipa", "Path for Discord.ipa")
 	flag.StringVar(&iconsFile, "i", "files/ipa-icons.zip", "Path for icons.zip")
+	flag.StringVar(&outputPath, "o", "Bunny.ipa", "IPA output path")
 
 	flag.Parse()
 }
