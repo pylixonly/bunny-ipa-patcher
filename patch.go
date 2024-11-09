@@ -7,7 +7,6 @@ import (
 	"strings"
 	"path/filepath"
 	"io/ioutil"
-	"fmt"
 
 	"howett.net/plist"
 )
