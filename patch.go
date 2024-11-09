@@ -93,7 +93,8 @@ func renameReactNavigationElementsFolder() error {
 	}
 
 	if reactNavigationPath == "" {
-		return fmt.Errorf("could not find the @react-navigation+elements folder")
+		log.Println("Could not find the @react-navigation+elements folder, skipping")
+		return nil
 	}
 
 	log.Println("Found the react-navigation+elements folder:\n\t", reactNavigationPath)
